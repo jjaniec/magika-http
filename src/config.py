@@ -14,6 +14,7 @@ API_SETTINGS = {
 # OpenTelemetry settings
 OTEL_SERVICE_NAME = os.getenv("OTEL_SERVICE_NAME", "magika-http")
 OTEL_EXPORTER_OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "")
+OTEL_SDK_DISABLED = os.getenv("OTEL_SDK_DISABLED", "").lower() == "true"
 
 # Server settings
 PORT = int(os.getenv("PORT", "8080"))

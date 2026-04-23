@@ -15,7 +15,14 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from pydantic import BaseModel
 
-from config import API_SETTINGS, HOST, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_SERVICE_NAME, PORT
+from config import (
+    API_SETTINGS,
+    HOST,
+    OTEL_EXPORTER_OTLP_ENDPOINT,
+    OTEL_SDK_DISABLED,
+    OTEL_SERVICE_NAME,
+    PORT,
+)
 from swagger import setup_swagger_docs
 
 # ---------------------------------------------------------------------------
@@ -25,15 +32,16 @@ from swagger import setup_swagger_docs
 _resource = Resource.create({"service.name": OTEL_SERVICE_NAME})
 _provider = TracerProvider(resource=_resource)
 
-if OTEL_EXPORTER_OTLP_ENDPOINT:
-    # Use OTLP gRPC exporter when an endpoint is configured
-    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+if not OTEL_SDK_DISABLED:
+    if OTEL_EXPORTER_OTLP_ENDPOINT:
+        # Use OTLP gRPC exporter when an endpoint is configured
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
-    _otlp_exporter = OTLPSpanExporter(endpoint=OTEL_EXPORTER_OTLP_ENDPOINT)
-    _provider.add_span_processor(BatchSpanProcessor(_otlp_exporter))
-else:
-    # Fall back to console exporter so spans are visible during local dev
-    _provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+        _otlp_exporter = OTLPSpanExporter(endpoint=OTEL_EXPORTER_OTLP_ENDPOINT)
+        _provider.add_span_processor(BatchSpanProcessor(_otlp_exporter))
+    else:
+        # Fall back to console exporter so spans are visible during local dev
+        _provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
 trace.set_tracer_provider(_provider)
 tracer = trace.get_tracer(__name__)

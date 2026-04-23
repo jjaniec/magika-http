@@ -82,6 +82,7 @@ curl http://localhost:8080/healthz
 | `HOST` | `0.0.0.0` | Host the server binds to |
 | `OTEL_SERVICE_NAME` | `magika-http` | OpenTelemetry service name |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | _(empty)_ | OTLP gRPC collector endpoint. When unset, spans are printed to stdout |
+| `OTEL_SDK_DISABLED` | `false` | Set to `true` to disable all OpenTelemetry tracing (suppresses console output when no collector is configured) |
 
 ### With OpenTelemetry export
 
